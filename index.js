@@ -1,25 +1,23 @@
 class MemoTest {
   constructor() {
+    /* Esto representa las cartas del memotest, en un futuro serán imágenes */
     this.imagenes = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
+    /*  esto representa la grilla en la que aparecen las imágenes, a cada lugar de la grilla se le asigna una "imágen" */
     this.grilla = {};
     this.primeraPosicion;
     this.segundaPosicion;
     this.seguirJugando = true;
-    const ordenarImagenes = () => {
-      this.imagenes = this.imagenes.sort(function () {
-        return Math.random() - 0.5;
-      });
-    };
 
-    const rellenarGrilla = () => {
-      for (let i = 0; i < this.imagenes.length; i++) {
-        this.grilla[i] = this.imagenes[i];
-      }
-      console.log(this.grilla);
-    };
-    ordenarImagenes();
-    rellenarGrilla();
+    this.imagenes = this.imagenes.sort(function () {
+      return Math.random() - 0.5;
+    });
+
+    for (let i = 0; i < this.imagenes.length; i++) {
+      this.grilla[i] = this.imagenes[i];
+    }
+    console.log(this.grilla);
   }
+
   pedirPrimeraPosicion() {
     this.primeraPosicion = parseInt(
       prompt("Ingresá la posición de la primera carta")
@@ -28,9 +26,10 @@ class MemoTest {
       const mensaje = !this.esNumero(this.primeraPosicion)
         ? "Eso no es un número. Ingresá un número"
         : "La posición no es válida. Ingresá un número del 0 al 15";
-      this.primeraPosicion = prompt(mensaje);
+      this.primeraPosicion = parseInt(prompt(mensaje));
     }
   }
+
   pedirSegundaPosicion() {
     this.segundaPosicion = parseInt(
       prompt(
@@ -39,19 +38,18 @@ class MemoTest {
         }.Ahora ingresá la posición de la segunda carta`
       )
     );
-    while (
-      !this.esPosicionValida(this.segundaPosicion) ||
-      this.primeraPosicion === this.segundaPosicion
-    ) {
+    while (!this.esPosicionValida(this.segundaPosicion)) {
       const mensaje = !this.esNumero(this.segundaPosicion)
         ? "Eso no es un número. Ingresá un número"
         : "La posición no es válida. Ingresá un número del 0 al 15";
-      this.segundaPosicion = prompt(mensaje);
+      this.segundaPosicion = parseInt(prompt(mensaje));
     }
   }
+
   esNumero(dato) {
     return !isNaN(dato);
   }
+
   esPosicionValida(dato) {
     if (this.esNumero(dato)) {
       if (dato >= 0 && dato <= 15) {
@@ -59,6 +57,7 @@ class MemoTest {
       }
     }
   }
+
   compararImagenes() {
     if (
       this.grilla[this.primeraPosicion] === this.grilla[this.segundaPosicion]
@@ -76,9 +75,14 @@ class MemoTest {
       );
     }
   }
+
   jugarTurno() {
     this.pedirPrimeraPosicion();
     this.pedirSegundaPosicion();
+    while (this.primeraPosicion === this.segundaPosicion) {
+      alert("No se puede ingresar dos veces la misma posición");
+      this.pedirSegundaPosicion();
+    }
     this.compararImagenes();
     this.seguirJugando = confirm("Desea seguir jugando?");
   }
