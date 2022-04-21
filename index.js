@@ -1,14 +1,15 @@
+const imagenesOrdenadas = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
 class MemoTest {
   constructor() {
     /* Esto representa las cartas del memotest, en un futuro serán imágenes */
-    this.imagenes = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
     /*  esto representa la grilla en la que aparecen las imágenes, a cada lugar de la grilla se le asigna una "imágen" */
     this.grilla = {};
     this.primeraPosicion;
     this.segundaPosicion;
     this.seguirJugando = true;
-
-    this.imagenes = this.imagenes.sort(function () {
+    this.puntos = 0;
+    this.posicionesAcertadas = [];
+    this.imagenes = imagenesOrdenadas.sort(function () {
       return Math.random() - 0.5;
     });
 
@@ -18,32 +19,36 @@ class MemoTest {
     console.log(this.grilla);
   }
 
-  pedirPrimeraPosicion() {
-    this.primeraPosicion = parseInt(
-      prompt("Ingresá la posición de la primera carta")
-    );
-    while (!this.esPosicionValida(this.primeraPosicion)) {
+  cargarPrimeraPosicion() {
+    this.primeraPosicion = parseInt(this.inputPrimeraPosicion.value);
+    if (!this.esPosicionValida(this.primeraPosicion)) {
       const mensaje = !this.esNumero(this.primeraPosicion)
         ? "Eso no es un número. Ingresá un número"
         : "La posición no es válida. Ingresá un número del 0 al 15";
-      this.primeraPosicion = parseInt(prompt(mensaje));
+      this.primerMensaje.innerHTML = mensaje;
+    } else {
+      this.primerMensaje.innerHTML =
+        "En la posición que ingresaste está la carta " +
+        this.grilla[this.primeraPosicion];
     }
   }
 
-  pedirSegundaPosicion() {
-    this.segundaPosicion = parseInt(
-      prompt(
-        `En la posición que ingresaste primero está la imagen ${
-          this.grilla[this.primeraPosicion]
-        }.Ahora ingresá la posición de la segunda carta`
-      )
-    );
-    while (!this.esPosicionValida(this.segundaPosicion)) {
+  cargarSegundaPosicion() {
+    this.segundaPosicion = parseInt(this.inputSegundaPosicion.value);
+    if (!this.esPosicionValida(this.segundaPosicion)) {
       const mensaje = !this.esNumero(this.segundaPosicion)
         ? "Eso no es un número. Ingresá un número"
         : "La posición no es válida. Ingresá un número del 0 al 15";
-      this.segundaPosicion = parseInt(prompt(mensaje));
+      this.segundoMensaje.innerHTML = mensaje;
+    } else if (this.primeraPosicion === this.segundaPosicion) {
+      this.segundoMensaje.innerHTML =
+        "La posición no es válida. Ingresá un número distinto a la primera posición";
+    } else {
+      this.segundoMensaje.innerHTML =
+        "En la posición que ingresaste está la carta " +
+        this.grilla[this.segundaPosicion];
     }
+    this.comprobarSiFueIngresada();
   }
 
   esNumero(dato) {
@@ -60,40 +65,71 @@ class MemoTest {
 
   compararImagenes() {
     if (
-      this.grilla[this.primeraPosicion] === this.grilla[this.segundaPosicion]
+      this.grilla[this.primeraPosicion] === this.grilla[this.segundaPosicion] &&
+      this.primeraPosicion != this.segundaPosicion &&
+      !this.comprobarSiFueIngresada()
     ) {
-      alert(
-        `Las imágenes que ingresaste son la ${
-          this.grilla[this.primeraPosicion]
-        } y la ${this.grilla[this.segundaPosicion]}. Acertaste!`
-      );
+      this.tercerMensaje.innerHTML = "¡Felicitaciones! Acertaste";
+      this.contarPuntos();
+      this.guardarPosicionesAcertadas();
+    } else if (
+      this.comprobarSiFueIngresada() ||
+      this.primeraPosicion === this.segundaPosicion
+    ) {
+      this.segundoMensaje.innerHTML = "Ya ingresaste esa posición";
     } else {
-      alert(
-        `Las imágenes que ingresaste son la ${
-          this.grilla[this.primeraPosicion]
-        } y la ${this.grilla[this.segundaPosicion]}. No acertaste:(`
-      );
+      this.tercerMensaje.innerHTML = "No acertaste:(";
     }
+    this.seguirJugandoBtn.style.display = "block";
   }
 
-  jugarTurno() {
-    this.pedirPrimeraPosicion();
-    this.pedirSegundaPosicion();
-    while (this.primeraPosicion === this.segundaPosicion) {
-      alert("No se puede ingresar dos veces la misma posición");
-      this.pedirSegundaPosicion();
-    }
-    this.compararImagenes();
-    this.seguirJugando = confirm("Desea seguir jugando?");
+  contarPuntos() {
+    this.puntos++;
+    this.mostrarPuntos.innerHTML = "Puntos: " + this.puntos;
   }
+  guardarPosicionesAcertadas() {
+    this.posicionesAcertadas.push(this.primeraPosicion);
+    this.posicionesAcertadas.push(this.segundaPosicion);
+  }
+
+  comprobarSiFueIngresada() {
+    if (
+      this.posicionesAcertadas.includes(this.primeraPosicion) ||
+      this.posicionesAcertadas.includes(this.segundaPosicion)
+    ) {
+      return true;
+    }
+  }
+  jugarTurno() {}
 
   comenzarJuego() {
-    alert("Hola! Vamos a jugar al memotest");
-    this.jugarTurno();
-    while (this.seguirJugando) {
-      this.jugarTurno();
-    }
-    alert("Gracias por jugar!! Nos vemos la próxima :3");
+    this.inputPrimeraPosicion = document.getElementById("primeraPosicion");
+    this.inputSegundaPosicion = document.getElementById("segundaPosicion");
+    this.primeraPosBtn = document.getElementById("primeraPosBtn");
+    this.segundaPosBtn = document.getElementById("segundaPosBtn");
+    this.primerMensaje = document.getElementById("mensaje1");
+    this.segundoMensaje = document.getElementById("mensaje2");
+    this.tercerMensaje = document.getElementById("mensaje3");
+    this.seguirJugandoBtn = document.getElementById("seguirJugandoBtn");
+    this.mostrarPuntos = document.getElementById("puntos");
+
+    this.primeraPosBtn.addEventListener("click", () => {
+      this.cargarPrimeraPosicion();
+    });
+
+    this.segundaPosBtn.addEventListener("click", () => {
+      this.cargarSegundaPosicion();
+      this.compararImagenes();
+    });
+    this.seguirJugandoBtn.addEventListener("click", () => {
+      this.seguirJugandoBtn.style.display = "none";
+      this.primerMensaje.innerHTML = "";
+      this.segundoMensaje.innerHTML = "";
+      this.tercerMensaje.innerHTML = "";
+      this.inputPrimeraPosicion.value = "";
+      this.inputSegundaPosicion.value = "";
+      console.log(this.posicionesAcertadas);
+    });
   }
 }
 
