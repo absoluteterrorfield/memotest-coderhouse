@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <style>
+      th,
+      td {
+        border: 1px solid black;
+        padding: 50px;
+      }
+      td:hover {
+        cursor: pointer;
+      }
+    </style>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,15 +20,33 @@
   <body>
     <h2>Bienvenido al juego del memotest!</h2>
     <h4 id="puntos">Puntos: 0</h4>
-    <p>Ingresá la posición de la primera carta</p>
-    <input type="text" id="primeraPosicion" />
-    <button id="primeraPosBtn">Enviar</button>
-    <p id="mensaje1"></p>
-    <p>Ingresá la posición de la segunda carta</p>
-    <input type="text" id="segundaPosicion" />
-    <button id="segundaPosBtn">Enviar</button>
-    <p id="mensaje2"></p>
-    <h3 id="mensaje3"></h3>
-    <button id="seguirJugandoBtn" style="display: none">Seguir Jugando</button>
+    <div id="tablero">
+      <table>
+        <tr>
+          <td id="0"></td>
+          <td id="1"></td>
+          <td id="2"></td>
+          <td id="3"></td>
+        </tr>
+        <tr>
+          <td id="4"></td>
+          <td id="5"></td>
+          <td id="6"></td>
+          <td id="7"></td>
+        </tr>
+        <tr>
+          <td id="8"></td>
+          <td id="9"></td>
+          <td id="10"></td>
+          <td id="11"></td>
+        </tr>
+        <tr>
+          <td id="12"></td>
+          <td id="13"></td>
+          <td id="14"></td>
+          <td id="15"></td>
+        </tr>
+      </table>
+    </div>
   </body>
 </html>
