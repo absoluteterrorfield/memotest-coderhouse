@@ -8,9 +8,10 @@ class MemoTest {
     this.segundaPosicion;
     this.primeraCarta;
     this.segundaCarta;
-    this.seguirJugando = true;
     this.puntos = 0;
     this.posicionesAcertadas = [];
+  }
+  mezclarCartas() {
     this.imagenes = imagenesOrdenadas.sort(function () {
       return Math.random() - 0.5;
     });
@@ -48,6 +49,10 @@ class MemoTest {
     if (this.primeraCarta === this.segundaCarta) {
       this.contarPuntos();
       this.guardarPosicionesAcertadas();
+      this.primeraPosicion = null;
+      this.segundaPosicion = null;
+      this.primeraCarta = null;
+      this.segundaCarta = null;
     } else {
       setTimeout(() => {
         this.ocultarCarta(this.primeraPosicion);
@@ -64,19 +69,34 @@ class MemoTest {
     this.puntos++;
     this.mostrarPuntos.innerHTML = "Puntos: " + this.puntos;
     if (this.puntos === 8) {
-      document.getElementById("tablero").innerHTML =
-        "<h1>Felicidades!! Ganaste :D </h1>";
+      this.tablero.style.display = "none";
+      this.mensaje.style.display = "block";
     }
   }
   guardarPosicionesAcertadas() {
     this.posicionesAcertadas.push(this.primeraPosicion);
     this.posicionesAcertadas.push(this.segundaPosicion);
   }
-
-  jugarTurno() {}
-
+  volverAJugar() {
+    for (let i = 0; i <= 15; i++) {
+      this.ocultarCarta(i.toString());
+    }
+    this.tablero.style.display = "block";
+    this.mensaje.style.display = "none";
+    this.puntos = 0;
+    this.posicionesAcertadas = [];
+    this.comenzarJuego();
+  }
   comenzarJuego() {
+    this.botonJugarDeNuevo = document.getElementById("jugarDeNuevo");
+    this.tablero = document.getElementById("tablero");
     this.mostrarPuntos = document.getElementById("puntos");
+    this.mensaje = document.getElementById("mensaje");
+    this.botonJugarDeNuevo.addEventListener("click", () => {
+      this.volverAJugar();
+    });
+    this.mezclarCartas();
+
     for (let i = 0; i <= 15; i++) {
       document.getElementById(i.toString()).addEventListener("click", () => {
         this.jugada(i.toString());
