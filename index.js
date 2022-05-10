@@ -1,109 +1,148 @@
-const imagenesOrdenadas = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
 class MemoTest {
   constructor() {
-    /* Esto representa las cartas del memotest, en un futuro serán imágenes */
-    /*  esto representa la grilla en la que aparecen las imágenes, a cada lugar de la grilla se le asigna una "imágen" */
-    this.grilla = {};
-    this.primeraPosicion;
-    this.segundaPosicion;
-    this.primeraCarta;
-    this.segundaCarta;
-    this.puntos = 0;
-    this.posicionesAcertadas = [];
+    this.grid = {};
+    this.firstPosition;
+    this.secondPosition;
+    this.firstCard;
+    this.secondCard;
+    this.points = 0;
+    this.matchedCards = [];
   }
-  mezclarCartas() {
-    this.imagenes = imagenesOrdenadas.sort(function () {
+
+  async getImages() {
+    const images = await fetch('./images.json');
+    const imagesJSON = await images.json();
+    this.images = imagesJSON;
+    console.log(this.images);
+  }
+
+  shuffleCards() {
+    this.images = this.images.sort(function () {
       return Math.random() - 0.5;
     });
 
-    for (let i = 0; i < this.imagenes.length; i++) {
-      this.grilla[i.toString()] = this.imagenes[i];
+    for (let i = 0; i < this.images.length; i++) {
+      this.grid[i.toString()] = this.images[i];
     }
-    console.log(this.grilla);
+    console.log(this.grid);
   }
-  mostrarCarta(posicion) {
-    document.getElementById(posicion).innerHTML = this.grilla[posicion];
-  }
-  ocultarCarta(posicion) {
-    document.getElementById(posicion).innerHTML = "";
-  }
-  jugada(posicion) {
-    if (this.posicionesAcertadas.includes(posicion)) return;
 
-    this.mostrarCarta(posicion);
-    console.log(posicion);
-    console.log(this.grilla[posicion]);
-    if (!this.primeraCarta) {
-      this.primeraPosicion = posicion;
-      this.primeraCarta = this.grilla[posicion];
+  flipCard(card) {
+    if (this.matchedCards.includes(card)) return;
+    card.classList.add('flipped');
+    console.log(card);
+    console.log(this.grid[card]);
+    if (!this.firstCard) {
+      this.firstPosition = card;
+      this.firstCard = this.grid[card];
     } else {
-      if (posicion === this.primeraPosicion) return;
+      if (card === this.firstPosition) return;
 
-      this.segundaPosicion = posicion;
-      this.segundaCarta = this.grilla[posicion];
-      this.compararImagenes();
+      this.secondPosition = card;
+      this.secondCard = this.grid[card];
+      this.compareCards();
     }
   }
+  hideCard(card) {
+    card.classList.remove('flipped');
+  }
+  /* jugada(card) {
+    if (this.matchedCards.includes(card)) return;
 
-  compararImagenes() {
-    if (this.primeraCarta === this.segundaCarta) {
-      this.contarPuntos();
-      this.guardarPosicionesAcertadas();
-      this.primeraPosicion = null;
-      this.segundaPosicion = null;
-      this.primeraCarta = null;
-      this.segundaCarta = null;
+    this.flipCard(card);
+    console.log(card);
+    console.log(this.grid[card]);
+    if (!this.firstCard) {
+      this.firstPosition = card;
+      this.firstCard = this.grid[card];
+    } else {
+      if (card === this.firstPosition) return;
+
+      this.secondPosition = card;
+      this.secondCard = this.grid[card];
+      this.compareCards();
+    }
+  }
+ */
+  compareCards() {
+    if (this.firstCard === this.secondCard) {
+      this.countPoints();
+      this.saveMatchedCards();
+      this.firstPosition = null;
+      this.secondPosition = null;
+      this.firstCard = null;
+      this.secondCard = null;
     } else {
       setTimeout(() => {
-        this.ocultarCarta(this.primeraPosicion);
-        this.ocultarCarta(this.segundaPosicion);
-        this.primeraPosicion = null;
-        this.segundaPosicion = null;
-        this.primeraCarta = null;
-        this.segundaCarta = null;
+        this.hideCard(this.firstPosition);
+        this.hideCard(this.secondPosition);
+        this.firstPosition = null;
+        this.secondPosition = null;
+        this.firstCard = null;
+        this.secondCard = null;
       }, 700);
     }
   }
 
-  contarPuntos() {
-    this.puntos++;
-    this.mostrarPuntos.innerHTML = "Puntos: " + this.puntos;
-    if (this.puntos === 8) {
-      this.tablero.style.display = "none";
-      this.mensaje.style.display = "block";
+  countPoints() {
+    this.points++;
+    this.mostrarpoints.innerHTML = 'points: ' + this.points;
+    if (this.points === 8) {
+      this.tablero.style.display = 'none';
+      this.mensaje.style.display = 'block';
     }
   }
-  guardarPosicionesAcertadas() {
-    this.posicionesAcertadas.push(this.primeraPosicion);
-    this.posicionesAcertadas.push(this.segundaPosicion);
+  saveMatchedCards() {
+    this.matchedCards.push(this.firstPosition);
+    this.matchedCards.push(this.secondPosition);
   }
-  volverAJugar() {
+  playAgain() {
     for (let i = 0; i <= 15; i++) {
-      this.ocultarCarta(i.toString());
+      this.hideCard(i.toString());
     }
-    this.tablero.style.display = "block";
-    this.mensaje.style.display = "none";
-    this.puntos = 0;
-    this.posicionesAcertadas = [];
-    this.comenzarJuego();
+    this.tablero.style.display = 'block';
+    this.mensaje.style.display = 'none';
+    this.points = 0;
+    this.matchedCards = [];
+    this.startGame();
   }
-  comenzarJuego() {
-    this.botonJugarDeNuevo = document.getElementById("jugarDeNuevo");
+  async startGame() {
+    await this.getImages();
+    this.shuffleCards();
+    this.images.forEach((img, index) => {
+      const imgDiv = document.createElement('div');
+      imgDiv.innerHTML = `<div class="card" id="card">
+              <div class="card-front face" id="card-front">
+                <img src="./public/images/${img}" alt="" srcset="" />
+              </div>
+              <div class="card-back face" id="card-back">
+                <img src="./public/images/back.jpg" alt="" srcset="" />
+              </div>
+            </div>`;
+      document.getElementById(index).innerHTML = imgDiv.innerHTML;
+    });
+    this.cards = Array.from(document.getElementsByClassName('card'));
+    this.cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        this.flipCard(card);
+      });
+    });
+    /* this.botonJugarDeNuevo = document.getElementById("jugarDeNuevo");
     this.tablero = document.getElementById("tablero");
     this.mostrarPuntos = document.getElementById("puntos");
     this.mensaje = document.getElementById("mensaje");
+
     this.botonJugarDeNuevo.addEventListener("click", () => {
-      this.volverAJugar();
+      this.playAgain();
     });
-    this.mezclarCartas();
 
     for (let i = 0; i <= 15; i++) {
       document.getElementById(i.toString()).addEventListener("click", () => {
         this.jugada(i.toString());
       });
-    }
+    } */
   }
 }
 
 const juego = new MemoTest();
-juego.comenzarJuego();
+juego.startGame();

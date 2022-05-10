@@ -1,0 +1,47 @@
+th,
+td {
+  border: 1px solid black;
+}
+td:hover {
+  cursor: pointer;
+}
+
+.card {
+  width: 110px;
+  height: 140px;
+  overflow: hidden;
+  position: relative;
+}
+
+.face {
+  background-size: cover;
+  background: transparent;
+  border-radius: 6px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transition: all 0.4s;
+}
+
+.face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-front {
+  transform: perspective(700px) rotateY(180deg);
+}
+
+.card-back {
+  transform: perspective(700px) rotateY(0);
+}
+
+.card.flipped .card-front {
+  transform: perspective(800px) rotateY(0);
+}
+
+.card.flipped .card-back {
+  transform: perspective(800px) rotateY(-180deg);
+}
