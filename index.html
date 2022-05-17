@@ -12,38 +12,54 @@
   </head>
   <body>
     <h2>Bienvenido al juego del memotest!</h2>
-    <h4 id="puntos">Puntos: 0</h4>
-    <div id="mensaje" style="display: none">
-      <h1>Felicidades!! Ganaste!! :3</h1>
-      <button id="jugarDeNuevo">Volver a jugar</button>
+    <div id="menu">
+      <p>Seleccione el modo de juego</p>
+      <button id="single-player">1 Jugador</button>
+      <button id="multi-player">2 Jugadores</button>
     </div>
-    <div id="tablero">
-      <table>
-        <tr>
-          <td id="0"></td>
-          <td id="1"></td>
-          <td id="2"></td>
-          <td id="3"></td>
-        </tr>
-        <tr>
-          <td id="4"></td>
-          <td id="5"></td>
-          <td id="6"></td>
-          <td id="7"></td>
-        </tr>
-        <tr>
-          <td id="8"></td>
-          <td id="9"></td>
-          <td id="10"></td>
-          <td id="11"></td>
-        </tr>
-        <tr>
-          <td id="12"></td>
-          <td id="13"></td>
-          <td id="14"></td>
-          <td id="15"></td>
-        </tr>
-      </table>
+
+    <div id="game" style="display: none">
+      <div id="time" style="display: none">
+        <h4>Tiempo restante: <span id="time-remaining">100</span></h4>
+      </div>
+      <div id="showTurn" style="display: none"></div>
+      <div id="points" style="display: none">
+        <div id="player-one-points" style="display: none"></div>
+        <div id="player-two-points" style="display: none"></div>
+      </div>
+      <div id="final-msg-container" style="display: none">
+        <h1 id="status-message"></h1>
+        <button id="play-again-btn">Volver a jugar</button>
+      </div>
+
+      <div id="board">
+        <table>
+          <tr>
+            <td id="0"></td>
+            <td id="1"></td>
+            <td id="2"></td>
+            <td id="3"></td>
+          </tr>
+          <tr>
+            <td id="4"></td>
+            <td id="5"></td>
+            <td id="6"></td>
+            <td id="7"></td>
+          </tr>
+          <tr>
+            <td id="8"></td>
+            <td id="9"></td>
+            <td id="10"></td>
+            <td id="11"></td>
+          </tr>
+          <tr>
+            <td id="12"></td>
+            <td id="13"></td>
+            <td id="14"></td>
+            <td id="15"></td>
+          </tr>
+        </table>
+      </div>
     </div>
   </body>
 </html>
