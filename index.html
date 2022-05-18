@@ -21,15 +21,24 @@
     <div id="game" style="display: none">
       <div id="time" style="display: none">
         <h4>Tiempo restante: <span id="time-remaining">100</span></h4>
+        <h4>Tiempo record: <span id="record">0</span></h4>
       </div>
       <div id="showTurn" style="display: none"></div>
       <div id="points" style="display: none">
-        <div id="player-one-points" style="display: none"></div>
-        <div id="player-two-points" style="display: none"></div>
+        <h3>Puntos</h3>
+        <div>
+          <span>Jugador 1: </span>
+          <span id="player-one-points">0</span>
+        </div>
+        <div>
+          <span>Jugador 2: </span>
+          <span id="player-two-points">0</span>
+        </div>
       </div>
       <div id="final-msg-container" style="display: none">
         <h1 id="status-message"></h1>
         <button id="play-again-btn">Volver a jugar</button>
+        <button id="back-to-menu-btn">Volver al menú principal</button>
       </div>
 
       <div id="board">

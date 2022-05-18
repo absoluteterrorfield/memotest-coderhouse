@@ -56,7 +56,80 @@ class MemoTest {
     });
   }
 
-  startCountdown() {
+  async initialize() {
+    await this.getImages();
+    this.createCardElements();
+    this.getHtmlElements();
+    this.addListeners();
+  }
+
+  startGame() {
+    this.createCardElements();
+    this.getHtmlElements();
+    this.addListeners();
+    this.shuffleCards();
+    this.gameDiv.style.display = "block";
+    this.board.style.display = "block";
+    this.finalMessageContainer.style.display = "none";
+    this.menu.style.display = "none";
+  }
+
+  victory() {
+    this.board.style.display = "none";
+    this.finalMessageContainer.style.display = "block";
+
+    if (this.players === "singlePlayer") {
+      clearInterval(this.countdown);
+      this.statusMessage.innerHTML = "EEAEAEAEAEAEAE ganaste :D";
+      if (this.remainingTime > this.record) {
+        this.getRecord();
+      }
+    } else {
+      if (this.playerOnePoints > this.playerTwoPoints) {
+        this.statusMessage.innerHTML = "Jugador 1 gana con " + this.playerOnePoints + " puntos";
+      } else {
+        this.statusMessage.innerHTML = "Jugador 2 gana con " + this.playerTwoPoints + " puntos";
+      }
+    }
+  }
+
+  gameOver() {
+    clearInterval(this.countdown);
+    this.board.style.display = "none";
+    this.finalMessageContainer.style.display = "block";
+    this.statusMessage.innerHTML = "Qué sad :( Perdiste u.u";
+  }
+
+  playAgain() {
+    this.hideAllCards();
+    this.board.style.display = "block";
+    this.finalMessageContainer.style.display = "none";
+    this.matchedCards = [];
+    if (this.players === "multiPlayer") {
+      this.playerOnePoints = 0;
+      this.playerTwoPoints = 0;
+      this.showPlayerOnePoints.innerHTML = this.playerOnePoints;
+      this.showPlayerTwoPoints.innerHTML = this.playerTwoPoints;
+    }
+    if (this.players === "singlePlayer") {
+      this.remainingTime = this.totalTime;
+      this.timerDisplay.innerHTML = this.remainingTime;
+      clearInterval(this.countdown);
+
+      this.countdown = setInterval(() => {
+        this.remainingTime--;
+        this.timerDisplay.innerHTML = this.remainingTime;
+        if (this.remainingTime === 0) {
+          this.gameOver();
+        }
+      }, 1000);
+    }
+    this.points = 0;
+    this.busy = false;
+    this.startGame();
+  }
+
+  /* startCountdown() {
     return setInterval(() => {
       this.remainingTime--;
       this.timerDisplay.innerHTML = this.remainingTime;
@@ -65,6 +138,8 @@ class MemoTest {
       }
     }, 1000);
   }
+ */
+  /* Cards Logic */
 
   shuffleCards() {
     this.images = this.images.sort(function () {
@@ -93,9 +168,6 @@ class MemoTest {
     } else {
       this.cardMismatch(card, this.cardToCheck);
     }
-    console.log(this.currentPlayer);
-    console.log(this.playerOnePoints);
-    console.log(this.playerTwoPoints);
     this.cardToCheck = null;
   }
 
@@ -122,22 +194,6 @@ class MemoTest {
     }, 1000);
   }
 
-  countPoints() {
-    if (this.currentPlayer === 1) {
-      this.playerOnePoints++;
-    } else {
-      this.playerTwoPoints++;
-    }
-  }
-
-  changeTurn() {
-    if (this.currentPlayer === 1) {
-      this.currentPlayer = 2;
-    } else {
-      this.currentPlayer = 1;
-    }
-  }
-
   hideCard(card) {
     card.classList.remove("flipped");
   }
@@ -153,38 +209,7 @@ class MemoTest {
   }
 
   canFlipCard(card) {
-    return (
-      !this.busy &&
-      !this.matchedCards.includes(card) &&
-      card !== this.cardToCheck
-    );
-  }
-
-  gameOver() {
-    clearInterval(this.countdown);
-    this.board.style.display = "none";
-    this.finalMessageContainer.style.display = "block";
-    this.statusMessage.innerHTML = "Qué sad :( Perdiste u.u";
-  }
-
-  victory() {
-    
-    this.board.style.display = "none";
-    this.finalMessageContainer.style.display = "block";
-    
-    if(this.players === "singlePlayer"){
-      clearInterval(this.countdown);
-      this.statusMessage.innerHTML = "EEAEAEAEAEAEAE ganaste :D";
-      if(this.remainingTime>this.record){
-        this.getRecord();
-      }
-    }else{
-      if(this.playerOnePoints>this.playerTwoPoints){
-        this.statusMessage.innerHTML = "Jugador 1 gana con " + this.playerOnePoints + " puntos";
-      }else{
-        this.statusMessage.innerHTML = "Jugador 2 gana con " + this.playerTwoPoints + " puntos";
-      }
-    }
+    return !this.busy && !this.matchedCards.includes(card) && card !== this.cardToCheck;
   }
 
   saveMatchedCards() {
@@ -192,70 +217,65 @@ class MemoTest {
     this.matchedCards.push(this.secondPosition);
   }
 
+  /* Players Logic */
   setSinglePlayerMode() {
-    this.totalTime = 100;
+    this.totalTime = 4;
     this.remainingTime = this.totalTime;
+    this.timerDiv = document.getElementById("time");
     this.timerDisplay = document.getElementById("time-remaining");
-    this.countdown = this.startCountdown();
+    this.countdown = setInterval(() => {
+      console.log("hit");
+      this.remainingTime--;
+      this.timerDisplay.innerHTML = this.remainingTime;
+      if (this.remainingTime === 0) {
+        this.gameOver();
+      }
+    }, 1000);
     this.remainingTime = this.totalTime;
     this.players = "singlePlayer";
-    this.record;
+    this.record = localStorage.getItem("record") || 0;
+    this.showRecord = document.getElementById("record");
+    this.showRecord.innerHTML = this.record;
+    this.timerDiv.style.display = "block";
     this.timerDisplay.style.display = "block";
-    this.startGame(this.players);
+    this.startGame();
   }
-  
-  getRecord() {
-    this.record = this.remainingTime;
-    localStorage.setItem("record", this.record);
-    console.log("anda :D"+this.record);
-    
-}
-
 
   setMultiplayerMode() {
     this.showPoints = document.getElementById("points");
     this.showPlayerOnePoints = document.getElementById("player-one-points");
     this.showPlayerTwoPoints = document.getElementById("player-two-points");
+    this.showPoints = document.getElementById("points");
     this.playerOnePoints = 0;
     this.playerTwoPoints = 0;
     this.players = "multiPlayer";
     this.currentPlayer = 1;
-    this.showPlayerOnePoints.style.display = "block";
-    this.showPlayerTwoPoints.style.display = "block";
-    this.startGame(this.players);
+    this.showPoints.style.display = "block";
+    this.startGame();
   }
 
-
-  async playAgain() {
-    this.hideAllCards();
-    this.board.style.display = "block";
-    this.finalMessageContainer.style.display = "none";
-    this.remainingTime = this.totalTime;
-    this.timerDisplay.innerHTML = this.remainingTime;
-    this.matchedCards = [];
-    this.points = 0;
-    this.busy = false;
-    await this.startGame();
-  }
-
-  async initialize() {
-    await this.getImages();
-    this.shuffleCards();
-    this.createCardElements();
-    this.getHtmlElements();
-    this.addListeners();
-  }
-
-  startGame(players) {
-    this.gameDiv.style.display = "block";
-    this.board.style.display = "block";
-    this.finalMessageContainer.style.display = "none";
-    this.menu.style.display = "none";
-    if(players === "singlePlayer"){
-    
-    }else{
-      
+  countPoints() {
+    if (this.currentPlayer === 1) {
+      this.playerOnePoints++;
+      this.showPlayerOnePoints.innerHTML = this.playerOnePoints;
+    } else {
+      this.playerTwoPoints++;
+      this.showPlayerTwoPoints.innerHTML = this.playerTwoPoints;
     }
+  }
+
+  changeTurn() {
+    if (this.currentPlayer === 1) {
+      this.currentPlayer = 2;
+    } else {
+      this.currentPlayer = 1;
+    }
+  }
+
+  getRecord() {
+    this.record = this.remainingTime;
+    localStorage.setItem("record", this.record);
+    console.log("anda :D" + this.record);
   }
 }
 
