@@ -21,6 +21,7 @@ class MemoTest {
     this.singlePlayerBtn = document.getElementById("single-player");
     this.multiPlayerBtn = document.getElementById("multi-player");
     this.menu = document.getElementById("menu");
+    this.gameDiv = document.getElementById("game");
   }
 
   createCardElements() {
@@ -167,10 +168,23 @@ class MemoTest {
   }
 
   victory() {
-    clearInterval(this.countdown);
+    
     this.board.style.display = "none";
     this.finalMessageContainer.style.display = "block";
-    this.statusMessage.innerHTML = "EEAEAEAEAEAEAE ganaste :D";
+    
+    if(this.players === "singlePlayer"){
+      clearInterval(this.countdown);
+      this.statusMessage.innerHTML = "EEAEAEAEAEAEAE ganaste :D";
+      if(this.remainingTime>this.record){
+        this.getRecord();
+      }
+    }else{
+      if(this.playerOnePoints>this.playerTwoPoints){
+        this.statusMessage.innerHTML = "Jugador 1 gana con " + this.playerOnePoints + " puntos";
+      }else{
+        this.statusMessage.innerHTML = "Jugador 2 gana con " + this.playerTwoPoints + " puntos";
+      }
+    }
   }
 
   saveMatchedCards() {
@@ -185,7 +199,18 @@ class MemoTest {
     this.countdown = this.startCountdown();
     this.remainingTime = this.totalTime;
     this.players = "singlePlayer";
+    this.record;
+    this.timerDisplay.style.display = "block";
+    this.startGame(this.players);
   }
+  
+  getRecord() {
+    this.record = this.remainingTime;
+    localStorage.setItem("record", this.record);
+    console.log("anda :D"+this.record);
+    
+}
+
 
   setMultiplayerMode() {
     this.showPoints = document.getElementById("points");
@@ -195,7 +220,11 @@ class MemoTest {
     this.playerTwoPoints = 0;
     this.players = "multiPlayer";
     this.currentPlayer = 1;
+    this.showPlayerOnePoints.style.display = "block";
+    this.showPlayerTwoPoints.style.display = "block";
+    this.startGame(this.players);
   }
+
 
   async playAgain() {
     this.hideAllCards();
@@ -217,7 +246,17 @@ class MemoTest {
     this.addListeners();
   }
 
-  startGame(players) {}
+  startGame(players) {
+    this.gameDiv.style.display = "block";
+    this.board.style.display = "block";
+    this.finalMessageContainer.style.display = "none";
+    this.menu.style.display = "none";
+    if(players === "singlePlayer"){
+    
+    }else{
+      
+    }
+  }
 }
 
 const juego = new MemoTest();
