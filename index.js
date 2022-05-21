@@ -14,7 +14,6 @@ class MemoTest {
 
   getHtmlElements() {
     this.playAgainButton = document.getElementById("play-again-btn");
-    this.board = document.getElementById("board");
     this.finalMessageContainer = document.getElementById("final-msg-container");
     this.statusMessage = document.getElementById("status-message");
     this.cards = Array.from(document.getElementsByClassName("card"));
@@ -22,6 +21,18 @@ class MemoTest {
     this.multiPlayerBtn = document.getElementById("multi-player");
     this.menu = document.getElementById("menu");
     this.gameDiv = document.getElementById("game");
+    this.backToMenuBtn = document.getElementById("back-to-menu-btn");
+    this.singlePlayerFeatures = document.getElementById(
+      "single-player-features"
+    );
+    this.multiPlayerFeatures = document.getElementById("multi-player-features");
+    this.timerDisplay = document.getElementById("time-remaining");
+    this.showTurn = document.getElementById("turn");
+    this.showPoints = document.getElementById("points");
+    this.showPlayerOnePoints = document.getElementById("player-one-points");
+    this.showPlayerTwoPoints = document.getElementById("player-two-points");
+    this.showPoints = document.getElementById("points");
+    this.showRecord = document.getElementById("record");
   }
 
   createCardElements() {
@@ -54,6 +65,9 @@ class MemoTest {
     this.multiPlayerBtn.addEventListener("click", () => {
       this.setMultiplayerMode();
     });
+    this.backToMenuBtn.addEventListener("click", () => {
+      this.backToMenu();
+    });
   }
 
   async initialize() {
@@ -68,41 +82,57 @@ class MemoTest {
     this.getHtmlElements();
     this.addListeners();
     this.shuffleCards();
+
     this.gameDiv.style.display = "block";
-    this.board.style.display = "block";
     this.finalMessageContainer.style.display = "none";
     this.menu.style.display = "none";
   }
 
   victory() {
-    this.board.style.display = "none";
+    this.gameDiv.style.display = "none";
     this.finalMessageContainer.style.display = "block";
 
     if (this.players === "singlePlayer") {
       clearInterval(this.countdown);
       this.statusMessage.innerHTML = "EEAEAEAEAEAEAE ganaste :D";
       if (this.remainingTime > this.record) {
-        this.getRecord();
+        this.setRecord();
+        Swal.fire({
+          title: "Rompiste tu record! Felicitaciones!",
+          imageUrl: "./public/images/congratulations.gif",
+          confirmButtonText: "Joya!",
+        });
       }
     } else {
       if (this.playerOnePoints > this.playerTwoPoints) {
-        this.statusMessage.innerHTML = "Jugador 1 gana con " + this.playerOnePoints + " puntos";
+        this.statusMessage.innerHTML =
+          "Jugador 1 gana con " + this.playerOnePoints + " puntos";
       } else {
-        this.statusMessage.innerHTML = "Jugador 2 gana con " + this.playerTwoPoints + " puntos";
+        this.statusMessage.innerHTML =
+          "Jugador 2 gana con " + this.playerTwoPoints + " puntos";
       }
     }
   }
 
   gameOver() {
     clearInterval(this.countdown);
-    this.board.style.display = "none";
+    this.gameDiv.style.display = "none";
     this.finalMessageContainer.style.display = "block";
     this.statusMessage.innerHTML = "Qué sad :( Perdiste u.u";
   }
 
+  backToMenu() {
+    clearInterval(this.countdown);
+    this.gameDiv.style.display = "none";
+    this.singlePlayerFeatures.style.display = "none";
+    this.multiPlayerFeatures.style.display = "none";
+    this.menu.style.display = "block";
+    this.finalMessageContainer.style.display = "none";
+  }
+
   playAgain() {
     this.hideAllCards();
-    this.board.style.display = "block";
+    this.gameDiv.style.display = "block";
     this.finalMessageContainer.style.display = "none";
     this.matchedCards = [];
     if (this.players === "multiPlayer") {
@@ -124,7 +154,7 @@ class MemoTest {
         }
       }, 1000);
     }
-    this.points = 0;
+
     this.busy = false;
     this.startGame();
   }
@@ -209,7 +239,11 @@ class MemoTest {
   }
 
   canFlipCard(card) {
-    return !this.busy && !this.matchedCards.includes(card) && card !== this.cardToCheck;
+    return (
+      !this.busy &&
+      !this.matchedCards.includes(card) &&
+      card !== this.cardToCheck
+    );
   }
 
   saveMatchedCards() {
@@ -219,12 +253,12 @@ class MemoTest {
 
   /* Players Logic */
   setSinglePlayerMode() {
+    clearInterval(this.countdown);
     this.totalTime = 4;
     this.remainingTime = this.totalTime;
-    this.timerDiv = document.getElementById("time");
-    this.timerDisplay = document.getElementById("time-remaining");
+    this.singlePlayerFeatures.style.display = "block";
+    this.timerDisplay.innerHTML = this.remainingTime;
     this.countdown = setInterval(() => {
-      console.log("hit");
       this.remainingTime--;
       this.timerDisplay.innerHTML = this.remainingTime;
       if (this.remainingTime === 0) {
@@ -234,23 +268,18 @@ class MemoTest {
     this.remainingTime = this.totalTime;
     this.players = "singlePlayer";
     this.record = localStorage.getItem("record") || 0;
-    this.showRecord = document.getElementById("record");
+
     this.showRecord.innerHTML = this.record;
-    this.timerDiv.style.display = "block";
-    this.timerDisplay.style.display = "block";
     this.startGame();
   }
 
   setMultiplayerMode() {
-    this.showPoints = document.getElementById("points");
-    this.showPlayerOnePoints = document.getElementById("player-one-points");
-    this.showPlayerTwoPoints = document.getElementById("player-two-points");
-    this.showPoints = document.getElementById("points");
     this.playerOnePoints = 0;
     this.playerTwoPoints = 0;
     this.players = "multiPlayer";
     this.currentPlayer = 1;
-    this.showPoints.style.display = "block";
+    this.showTurn.innerHTML = "Jugador " + this.currentPlayer;
+    this.multiPlayerFeatures.style.display = "block";
     this.startGame();
   }
 
@@ -270,12 +299,12 @@ class MemoTest {
     } else {
       this.currentPlayer = 1;
     }
+    this.showTurn.innerHTML = "Jugador " + this.currentPlayer;
   }
 
-  getRecord() {
+  setRecord() {
     this.record = this.remainingTime;
     localStorage.setItem("record", this.record);
-    console.log("anda :D" + this.record);
   }
 }
 
