@@ -31,7 +31,6 @@ class MemoTest {
     this.showPoints = document.getElementById("points");
     this.showPlayerOnePoints = document.getElementById("player-one-points");
     this.showPlayerTwoPoints = document.getElementById("player-two-points");
-    this.showPoints = document.getElementById("points");
     this.showRecord = document.getElementById("record");
   }
 
@@ -54,11 +53,6 @@ class MemoTest {
     this.playAgainButton.addEventListener("click", () => {
       this.playAgain();
     });
-    this.cards.forEach((card) => {
-      card.addEventListener("click", () => {
-        this.flipCard(card);
-      });
-    });
     this.singlePlayerBtn.addEventListener("click", () => {
       this.setSinglePlayerMode();
     });
@@ -80,9 +74,12 @@ class MemoTest {
   startGame() {
     this.createCardElements();
     this.getHtmlElements();
-    this.addListeners();
+     this.cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        this.flipCard(card);
+      });
+    });
     this.shuffleCards();
-
     this.gameDiv.style.display = "block";
     this.finalMessageContainer.style.display = "none";
     this.menu.style.display = "none";
@@ -107,9 +104,11 @@ class MemoTest {
       if (this.playerOnePoints > this.playerTwoPoints) {
         this.statusMessage.innerHTML =
           "Jugador 1 gana con " + this.playerOnePoints + " puntos";
-      } else {
+      } else if(this.playerOnePoints<this.playerTwoPoints){
         this.statusMessage.innerHTML =
           "Jugador 2 gana con " + this.playerTwoPoints + " puntos";
+      }else{
+        this.statusMessage.innerHTML = "Empataron! Hora de la revancha"
       }
     }
   }
@@ -118,11 +117,10 @@ class MemoTest {
     clearInterval(this.countdown);
     this.gameDiv.style.display = "none";
     this.finalMessageContainer.style.display = "block";
-    this.statusMessage.innerHTML = "Qué sad :( Perdiste u.u";
+    this.statusMessage.innerHTML = "No lograste evitar el tercer impacto. El proyecto de instrumentalización humana ha comenzado";
   }
 
   backToMenu() {
-    clearInterval(this.countdown);
     this.gameDiv.style.display = "none";
     this.singlePlayerFeatures.style.display = "none";
     this.multiPlayerFeatures.style.display = "none";
@@ -144,8 +142,6 @@ class MemoTest {
     if (this.players === "singlePlayer") {
       this.remainingTime = this.totalTime;
       this.timerDisplay.innerHTML = this.remainingTime;
-      clearInterval(this.countdown);
-
       this.countdown = setInterval(() => {
         this.remainingTime--;
         this.timerDisplay.innerHTML = this.remainingTime;
@@ -254,7 +250,7 @@ class MemoTest {
   /* Players Logic */
   setSinglePlayerMode() {
     clearInterval(this.countdown);
-    this.totalTime = 4;
+    this.totalTime = 60;
     this.remainingTime = this.totalTime;
     this.singlePlayerFeatures.style.display = "block";
     this.timerDisplay.innerHTML = this.remainingTime;
@@ -303,8 +299,10 @@ class MemoTest {
   }
 
   setRecord() {
-    this.record = this.remainingTime;
+    this.record = this.totalTime-this.remainingTime;
     localStorage.setItem("record", this.record);
+    this.showRecord.innerHTML = this.record;
+
   }
 }
 
