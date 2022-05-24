@@ -66,7 +66,6 @@ class MemoTest {
 
   async initialize() {
     await this.getImages();
-    this.createCardElements();
     this.getHtmlElements();
     this.addListeners();
   }
