@@ -71,6 +71,7 @@ class MemoTest {
   }
 
   startGame() {
+    this.shuffleCards();
     this.createCardElements();
     this.getHtmlElements();
      this.cards.forEach((card) => {
