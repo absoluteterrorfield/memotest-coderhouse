@@ -72,8 +72,8 @@ class MemoTest {
   }
 
   startGame() {
-    this.createCardElements();
-    this.getHtmlElements();
+    //this.createCardElements();
+    //this.getHtmlElements();
      this.cards.forEach((card) => {
       card.addEventListener("click", () => {
         this.flipCard(card);
