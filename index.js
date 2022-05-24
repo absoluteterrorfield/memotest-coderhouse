@@ -74,12 +74,12 @@ class MemoTest {
   startGame() {
     //this.createCardElements();
     //this.getHtmlElements();
+    this.shuffleCards();
      this.cards.forEach((card) => {
       card.addEventListener("click", () => {
         this.flipCard(card);
       });
     });
-    this.shuffleCards();
     this.gameDiv.style.display = "block";
     this.finalMessageContainer.style.display = "none";
     this.menu.style.display = "none";
